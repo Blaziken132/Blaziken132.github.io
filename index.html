@@ -1,75 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arduino Sensor Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        .sensor-data {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .sensor {
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 150px;
-        }
-        .sensor h3 {
-            margin-bottom: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arduino Sensor Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      color: #333;
+    }
+    .data {
+      font-size: 1.5rem;
+      margin: 20px 0;
+    }
+  </style>
 </head>
 <body>
-    <h1>Arduino Sensor Dashboard</h1>
-    <p>Visualización de datos en tiempo real de tres sensores conectados al Arduino.</p>
+  <h1>Datos de los Sensores</h1>
+  <div class="data">
+    <p><strong>pH:</strong> <span id="ph">Cargando...</span></p>
+    <p><strong>Distancia:</strong> <span id="distance">Cargando...</span></p>
+  </div>
+  <script>
+    async function fetchSensorData() {
+      try {
+        const response = await fetch("https://blaziken132.github.io/data.json");
+        const data = await response.json();
+        document.getElementById("ph").textContent = data.pH.toFixed(2);
+        document.getElementById("distance").textContent = data.distance.toFixed(2) + " cm";
+      } catch (error) {
+        console.error("Error fetching sensor data:", error);
+      }
+    }
 
-    <div class="sensor-data">
-        <div class="sensor">
-            <h3>Sensor 1</h3>
-            <p id="sensor1">Cargando...</p>
-        </div>
-        <div class="sensor">
-            <h3>Sensor 2</h3>
-            <p id="sensor2">Cargando...</p>
-        </div>
-        <div class="sensor">
-            <h3>Sensor 3</h3>
-            <p id="sensor3">Cargando...</p>
-        </div>
-    </div>
-
-    <script>
-        // Dirección IP o URL del ESP8266
-        const ESP8266_URL = 'http://192.168.4.1/data';
-
-        async function fetchSensorData() {
-            try {
-                const response = await fetch(ESP8266_URL);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-
-                // Actualizar los valores en la página
-                document.getElementById('sensor1').innerText = data.sensor1;
-                document.getElementById('sensor2').innerText = data.sensor2;
-                document.getElementById('sensor3').innerText = data.sensor3;
-            } catch (error) {
-                console.error('Error al obtener los datos:', error);
-            }
-        }
-
-        // Actualizar los datos cada 2 segundos
-        setInterval(fetchSensorData, 2000);
-    </script>
+    // Actualizar los datos cada 5 segundos
+    setInterval(fetchSensorData, 5000);
+    fetchSensorData();
+  </script>
 </body>
 </html>
+
